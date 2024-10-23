@@ -3,9 +3,6 @@ by Marcos López de Prado
 
 ## Table of Contents
 
-### Preamble
-* **Chapter 1:** Financial Machine Learning as a Distinct Subject
-
 ### Chapter 1: Introduction
 * **Motivation** 
 * **Theory Matters** 
