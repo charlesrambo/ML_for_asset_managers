@@ -12,7 +12,6 @@ from sklearn.covariance import LedoitWolf
 from sklearn.neighbors import KernelDensity
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
-import warnings
 
 path = ???
 plt.style.use("seaborn-v0_8")
