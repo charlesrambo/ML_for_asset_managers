@@ -25,6 +25,18 @@ by Marcos López de Prado
 * **Conclusion**
   
 ### Chapter 3: Distance Metrics
+* **Motevation** 
+* **Correlation-Based Metrics**
+* **Marginal and Joint Entropy**
+* **Conditional Entropy**
+* **Kullback-Leibler Divergence**
+* **Cross-Entropy**
+* **Mutual Information**
+* **Variation of Information**
+* **Discretization**
+* **Distance between Two Partitions**
+* **Experimental Results** 
+* **Conclusion**
 
 ### Chapter 4: Optimal Clustering
 
