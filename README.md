@@ -39,9 +39,22 @@ by Marcos López de Prado
 * **Conclusion**
 
 ### Chapter 4: Optimal Clustering
-
+* **Motevation**
+* **Proximity Matrix**
+* **Types of Clustering**
+* **Number of Clusters**
+* **Experimental Results**
+* **Conclusions**
+  
 ### Chapter 5: Financial Labels
-
+* **Motevation**
+* **Fixed-Horizon Method**
+* **Triple-Barrier Method**
+* **Trend-Scanning Method**
+* **Meta-Labeling**
+* **Experimental Results**
+* **Conclusions**
+  
 ### Chapter 6: Feature Importance Analysis
 
 ### Chapter 7: Portfolio Construction
