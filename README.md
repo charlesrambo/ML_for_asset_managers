@@ -56,6 +56,13 @@ by Marcos López de Prado
 * **Conclusions**
   
 ### Chapter 6: Feature Importance Analysis
+* **Motivation** 
+* **p-Values** 
+* **Feature Importance** 
+* **Probability-Weighted Accuracy**
+* **Substitution Effects**
+* **Experimental Results**
+* **Conclusions***
 
 ### Chapter 7: Portfolio Construction
 
