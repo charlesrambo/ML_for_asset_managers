@@ -17,12 +17,12 @@ from sklearn.linear_model import LinearRegression
 import sys
 
 
-path = r'G:/USERS/CharlesR/Python/ML_for_asset_managers/'
 
-# Make the directory Python because that's where cal_signals is located
+
+# Change director to path
 sys.path.insert(0, path)
 
-# Import the calc_signals Python script
+# Import the chapter four
 import Chapter_4 as four
 
 # See https://stackoverflow.com/questions/69596239/how-to-avoid-memory-leak-when-dealing-with-kmeans-for-example-in-this-code-i-am
