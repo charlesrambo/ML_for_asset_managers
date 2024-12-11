@@ -13,7 +13,7 @@ from sklearn.neighbors import KernelDensity
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 
-path = ???
+path = r'G:/USERS/CharlesR/Python/ML_for_asset_managers/'
 plt.style.use("seaborn-v0_8")
 
 #------------------------------------------------------------------------------
@@ -241,7 +241,7 @@ def find_marchenko_pastur_params(eigvals, q, bandwidth):
     return lam_plus, lam_minus, sigma2
 
 #------------------------------------------------------------------------------
-def get_clipped_corr(eigvals, eigenvectors, nfactors):
+def get_clipped_corr(eigvals, eigvecs, nfactors):
     # Remove noise from corr by fixing random eigenvalues
     
     # Convert to 1D array
@@ -254,7 +254,7 @@ def get_clipped_corr(eigvals, eigenvectors, nfactors):
     evals_= np.diag(evals_)
     
     # Calculate correlation matrix
-    corr1 = eigenvectors @ evals_ @ eigenvectors.T
+    corr1 = eigvecs @ evals_ @ eigvecs.T
     
     # Make sure observations on main diagonal are 1
     corr1 = cov2corr(corr1)
@@ -262,19 +262,19 @@ def get_clipped_corr(eigvals, eigenvectors, nfactors):
     return corr1
 
 #------------------------------------------------------------------------------
-def get_shrunk_corr(eigvals, eigenvectors, nfactors, alpha = 0):   
+def get_shrunk_corr(eigvals, eigvecs, nfactors, alpha = 0):   
     # Remove noise from corr through targeted shrinkage
     
     # Get the signal part
     evals_signal = eigvals[:nfactors, :nfactors] 
-    evecs_signal = eigenvectors[:, :nfactors]
+    evecs_signal = eigvecs[:, :nfactors]
     
     # Calculate signal correlation matrix
     corr_signal = evecs_signal @ evals_signal @ evecs_signal.T
     
     # Get the noise part
     evals_noise = eigvals[nfactors:, nfactors:]
-    evecs_noise = eigenvectors[:, nfactors:]
+    evecs_noise = eigvecs[:, nfactors:]
     
     # Calculate noise correlation matrix
     corr_noise = evecs_noise @ evals_noise @ evecs_noise.T
@@ -285,17 +285,17 @@ def get_shrunk_corr(eigvals, eigenvectors, nfactors, alpha = 0):
     return corr
 
 #------------------------------------------------------------------------------
-def detoned_corr(eigvals, eigenvectors, indicies):
+def detoned_corr(eigvals, eigvecs, indicies):
     
     # Calculate correlation matrix
-    C = eigenvectors @ eigvals @ eigenvectors.T
+    C = eigvecs @ np.diag(eigvals) @ eigvecs.T
     
     # Start with correlation matrix
     C_detoned = C 
     
     # Remove principal components specified in indicies
-    C_detoned -= np.outer(eigenvectors[:, indicies] @ eigvals[indicies, indicies], 
-                          eigenvectors[:, indicies].T)
+    C_detoned -= np.outer(eigvecs[:, indicies] @ eigvals[indicies], 
+                          eigvecs[:, indicies].T)
     
     # Make sure main diagonal only has ones
     C_detoned = cov2corr(C_detoned)
