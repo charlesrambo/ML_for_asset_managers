@@ -290,12 +290,11 @@ def detoned_corr(eigvals, eigvecs, indicies):
     # Calculate correlation matrix
     C = eigvecs @ np.diag(eigvals) @ eigvecs.T
     
-    # Start with correlation matrix
-    C_detoned = C 
+    # Create Lambda
+    Lambda = np.diag(eigvals[indicies])
     
-    # Remove principal components specified in indicies
-    C_detoned -= np.outer(eigvecs[:, indicies] @ eigvals[indicies], 
-                          eigvecs[:, indicies].T)
+    # Start with correlation matrix
+    C_detoned = C - eigvecs[:, indicies] @ Lambda @ eigvecs[:, indicies].T
     
     # Make sure main diagonal only has ones
     C_detoned = cov2corr(C_detoned)

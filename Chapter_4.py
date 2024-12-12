@@ -7,7 +7,7 @@ Created on Fri Oct 25 12:19:16 2024
 
 import numpy as np
 import pandas as pd
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, AgglomerativeClustering 
 from sklearn.metrics import silhouette_samples
 from sklearn.utils import check_random_state
 from scipy.linalg import block_diag
@@ -16,10 +16,8 @@ import matplotlib.pyplot as plt
 path = r'G:/USERS/CharlesR/Python/ML_for_asset_managers/'
 plt.style.use("seaborn-v0_8")
 
-
-
 #------------------------------------------------------------------------------
-def cluster_kmeans_base(corr0, max_clusters = 10, n_init = 10):
+def cluster_kmeans_base(corr0, max_clusters = 10, min_clusters = 2, n_init = 10, **kwargs):
     
     # Calculate distance matrix
     x = np.sqrt(0.5 * (1 - corr0.fillna(0)).clip(lower = 0.0, upper = 2.0))
@@ -31,13 +29,13 @@ def cluster_kmeans_base(corr0, max_clusters = 10, n_init = 10):
     max_clusters = int(np.min([max_clusters, corr0.shape[0] - 1]))
     
     # Loop over possible number of clusters
-    for i in range(2, max_clusters + 1):
+    for i in range(min_clusters, max_clusters + 1):
         
         # Itialize k-means
-        kmeans_ = KMeans(n_clusters = i, n_init = n_init)
+        kmeans_ = KMeans(n_clusters = i, n_init = n_init, **kwargs)
         
         # Fit results
-        kmeans_ = kmeans_.fit(x)
+        kmeans_.fit(x)
         
         if len(np.unique(kmeans_.labels_)) > 1:
             
@@ -66,6 +64,64 @@ def cluster_kmeans_base(corr0, max_clusters = 10, n_init = 10):
     # Create dictionary to record the clusters
     clust_dict = {clst:corr0.columns[np.where(kmeans.labels_ == clst)[0]].tolist()
                   for clst in np.unique(kmeans.labels_)}
+    
+    # Change index of silhouette scores
+    silh = pd.Series(silh, index = x.index)
+    
+    return corr1, clust_dict, silh
+
+
+#------------------------------------------------------------------------------
+def cluster_agglomerative_base(corr0, max_clusters = 10, min_clusters = 2, 
+                               linkage = 'complete', metric = 'precomputed', 
+                               **kwargs):
+    
+    # Calculate distance matrix
+    x = np.sqrt(0.5 * (1 - corr0.fillna(0)).clip(lower = 0.0, upper = 2.0))
+    
+    # Initialize pandas series to hold silhouette scores
+    silh = pd.Series()
+    
+    # max_clusters can't be more than samples minus 1
+    max_clusters = int(np.min([max_clusters, corr0.shape[0] - 1]))
+    
+    # Loop over possible number of clusters
+    for i in range(min_clusters, max_clusters + 1):
+        
+        # Itialize agglomerative clustering
+        agglo_ = AgglomerativeClustering(n_clusters = i, linkage = linkage, 
+                                          metric = metric, **kwargs).fit(x)
+        
+        # Fit results
+        agglo_.fit(x)
+        
+        if len(np.unique(agglo_.labels_)) > 1:
+            
+            # Get silhouette scores
+            silh_ = silhouette_samples(x, agglo_.labels_)
+            
+            # Record results
+            stat = (silh_.mean()/silh_.std(), silh.mean()/silh.std())
+            
+            # If improvement...
+            if np.isnan(stat[1])|(stat[0] > stat[1]):
+                
+                # ... record results
+                silh, agglo = silh_, agglo_
+                
+        else:
+            
+            continue
+    
+    # Get the index values
+    idx_new = np.argsort(agglo.labels_)
+    
+    # Rearrange correlation matrix
+    corr1 = corr0.iloc[idx_new, idx_new]
+    
+    # Create dictionary to record the clusters
+    clust_dict = {cluster:corr0.columns[np.where(agglo.labels_ == cluster)[0]].tolist()
+                  for cluster in np.unique(agglo.labels_)}
     
     # Change index of silhouette scores
     silh = pd.Series(silh, index = x.index)
