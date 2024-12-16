@@ -123,7 +123,7 @@ def optimal_portfolio_nco(cov, mu = None, max_clusters = None, method = 'k-means
         eigvals, eigvecs = np.linalg.eigh(corr)
         
         # Detone the correlation matrix
-        corr = two.detoned_corr(eigvals, eigvecs, [np.argmax(eigvals)])
+        corr = two.detone_corr(eigvals, eigvecs, [np.argmax(eigvals)])
 
     # Perform clustering
     if method == 'k-means':
@@ -214,7 +214,7 @@ if __name__ == '__main__':
     eigvals, eigvecs = np.linalg.eigh(corr1)
     
     # Detone the correlation matrix
-    corr_detoned = two.detoned_corr(eigvals, eigvecs, np.argsort(eigvals)[-3:])
+    corr_detoned = two.detone_corr(eigvals, eigvecs, np.argsort(eigvals)[-3:])
     
     # Convert correlation matrix to data frame
     corr_detoned = pd.DataFrame(corr_detoned, index = cov0.columns, 
@@ -249,7 +249,7 @@ if __name__ == '__main__':
     corr2, cluster_agglo_dict, silh_agglo = four.cluster_agglomerative_base(corr_detoned, 
                                     max_clusters = int(0.5 * corr1.shape[0]),
                                     min_clusters = 2,
-                                    metric = 'euclidean')
+                                    metric = 'precomputed')
     
     print(f'There are {len(cluster_kmeans_dict)} clusters.')
     print(f'There are {len(cluster_agglo_dict)} clusters.')
@@ -338,6 +338,6 @@ if __name__ == '__main__':
     rmsd_agglo_nco = np.sqrt(np.mean((wt_agglo_nco - wt_true).values.flatten()**2))
     
     print(f"The NCO algorithm using k-means clustering has an RMSE of {rmsd_kmeans_nco:.10f}.")
-    print(f"The NCO algorithm using agglomerative clusteringhas an RMSE of {rmsd_agglo_nco:.6f}.")
+    print(f"The NCO algorithm using agglomerative clusteringhas an RMSE of {rmsd_agglo_nco:.10f}.")
     print(f"The Markowitz's RMSE is {rmsd_markowitz:.6f}.")
     

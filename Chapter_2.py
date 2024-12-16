@@ -285,7 +285,7 @@ def get_shrunk_corr(eigvals, eigvecs, nfactors, alpha = 0):
     return corr
 
 #------------------------------------------------------------------------------
-def detoned_corr(eigvals, eigvecs, indicies):
+def detone_corr(eigvals, eigvecs, indicies):
     
     # Calculate correlation matrix
     C = eigvecs @ np.diag(eigvals) @ eigvecs.T
