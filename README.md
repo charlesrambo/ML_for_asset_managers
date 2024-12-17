@@ -65,5 +65,13 @@ by Marcos López de Prado
 * **Conclusions***
 
 ### Chapter 7: Portfolio Construction
+* **Motivation** 
+* **Convex Portfolio Optimization** 
+* **The Condition Number** 
+* **Markowitz's Curse**
+* **Signal as a Source of Covariance Instability**
+* **Nested Clustered Optimization Algorithm**
+* **Experimental Results**
+* **Conclusions***
 
 ### Chapter 8: Testing Set Overfitting
