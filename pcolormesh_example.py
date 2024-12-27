@@ -11,7 +11,7 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import sys
 
-
+path = r'G:/USERS/CharlesR/Python/ML_for_asset_managers/'
 
 # Make the directory Python because that's where cal_signals is located
 sys.path.insert(0, path)
@@ -77,8 +77,7 @@ X, Y = np.meshgrid(freq_df.columns, freq_df.index)
 Z = freq_df.values[1:, 1:]
 
 # Generate the pcolormesh
-c = ax.pcolormesh(X, Y, Z, cmap = 'Blues', shading = 'flat', norm = 'log', 
-                  label = 'simulated')
+c = ax.pcolormesh(X, Y, Z, cmap = 'Blues')
 
 # Add a color bar
 fig.colorbar(c, ax = ax)

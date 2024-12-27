@@ -9,7 +9,14 @@ import numpy as np
 import pandas as pd
 import scipy.stats as stats
 import matplotlib.pyplot as plt
-import seaborn as sns
+import sys
+
+path = r'G:/USERS/CharlesR/Python/ML_for_asset_managers/'
+
+# Make the directory Python because that's where cal_signals is located
+sys.path.insert(0, path)
+
+plt.style.use("seaborn-v0_8")
 
 #------------------------------------------------------------------------------
 def get_expected_max_SR(num_trials, mean_SR, std_SR):
@@ -52,10 +59,10 @@ def get_max_SR_distribution(num_sims, trials_per_sim_list, mean_SR, std_SR, seed
 def get_mean_std_error(num_sims_per_run, num_runs, trials_per_sim_list, 
                        mean_SR = 0.0, std_SR = 1.0):
     
-    # Compute standard deviation of errors per nTrials
-    # nTrials: [number of SR used to derive max{SR}]
-    # nSims0: number of max{SR} used to estimate E[max{SR}]
-    # nSims1: number of errors on which std is computed
+    # Compute standard deviation of errors for given numbera of trials
+    # trials_per_sim_lists: [number of SR used to derive max{SR}]
+    # num_sims_per_run: number of max{SR} used to estimate E[max{SR}]
+    # num_runs: number of errors on which std is computed
     
     sharpe_ratios = pd.Series(
         {num_trials:get_expected_max_SR(num_trials, mean_SR, std_SR) 
@@ -137,46 +144,93 @@ def get_type_2_error_prob(alpha_k, k, theta):
 if __name__ == '__main__':
     
     #--------------------------------------------------------------------------
-    #trials_per_sim_list = np.logspace(1, 6, 1000).astype(int) 
-    trials_per_sim_list = np.logspace(1, 5, 100).astype(int)
-    trials_per_sim_list.sort()
+    # Define the number of trials
+    trials_per_sim_list = np.logspace(1, 4, 1000).astype(int) 
     
+    # Calculate the theoretical values for each number of trials
     sharpe_ratio_theoretical = pd.Series({num_trials:get_expected_max_SR(num_trials, mean_SR = 0, std_SR = 1) 
                                           for num_trials in trials_per_sim_list})
-    sharpe_ratio_theoretical = pd.DataFrame(sharpe_ratio_theoretical, columns = ['max{SR}'])
+    
+    # Convert to a data frame
+    sharpe_ratio_theoretical = pd.DataFrame(sharpe_ratio_theoretical, columns = ['E[max{SR}]'])
     sharpe_ratio_theoretical.index.names = ['num_trials']
     
+    # Run simulation
     sharpe_ratio_sims = get_max_SR_distribution(
-                                    #num_sims = 1e3,
-                                    num_sims = 100,
+                                    num_sims = 1e3,
                                     trials_per_sim_list = trials_per_sim_list, 
                                     mean_SR = 0.0, 
                                     std_SR = 1.0)
     
+    # Make a deep copy of simulation to calculate frequencies
+    freq_df = sharpe_ratio_sims.copy()
     
-    heatmap_df = sharpe_ratio_sims.copy()
+    # Add a column of ones for later reference
+    freq_df['count'] = 1.0
     
-    heatmap_df['count'] = 1
-    heatmap_df['max{SR}'] = heatmap_df['max{SR}'].round(3)
-    heatmap_df = heatmap_df.groupby(['num_trials', 'max{SR}']).count().reset_index()
-    heatmap_df = heatmap_df.pivot(index = 'max{SR}', columns = 'num_trials', 
+    # Discretize the max Sharpe ratio column
+    freq_df['max{SR}'] = 0.5 * (2 * freq_df['max{SR}']).round(1)
+    
+    # Count the number of observations for each max Sharpe ratio
+    freq_df = freq_df.groupby(['num_trials', 'max{SR}'])['count'].sum().reset_index()
+    
+    # Pivot results
+    freq_df = freq_df.pivot(index = 'max{SR}', columns = 'num_trials', 
                                   values = 'count')
-    heatmap_df = heatmap_df.fillna(0)
     
-    heatmap_df = heatmap_df.sort_index(ascending = False)
+    # Use linear interpolation instead of using a very large number of samples
+    freq_df = freq_df.interpolate(axis = 0).interpolate(axis = 1)
     
+    # Fill missing values with 0
+    freq_df = freq_df.fillna(0.0)
+    
+    # Divide by the sum of the column      
+    freq_df = freq_df.div(freq_df.sum(axis = 0), axis = 1)
+    
+    # Sort the index
+    freq_df = freq_df.sort_index(ascending = False)
+    
+    # Solution from https://stackoverflow.com/questions/79304262/curve-on-top-of-heatmap-seaborn
+    
+    # Get figure and axes
     fig, ax = plt.subplots()
+
+    # Convert to grid
+    X, Y = np.meshgrid(freq_df.columns, freq_df.index)
+
+    # Get the frequency numbers
+    Z = freq_df.values[1:, 1:]
+
+    # Generate the pcolormesh
+    c = ax.pcolormesh(X, Y, Z, cmap = 'Blues')
+
+    # Add a color bar
+    fig.colorbar(c, label = 'Normalized Counts', aspect = 12, pad = 0.02)
+
+    # Place theoretical values on graph
+    sharpe_ratio_theoretical.plot(ax = ax, color = 'red')
+
+    # Add a title
+    ax.set_title('$\max\{SR\}$ across uninformed strategies for std(SR) = 1')
+
+    # Add axis labels
+    ax.set_xlabel('Number of Trials')
+    ax.set_ylabel('$E[\max\{SR\}]$, $\max\{SR\}$')
     
-    sns.heatmap(heatmap_df, cmap = 'Blues', ax = ax)
-    sns.lineplot(x = sharpe_ratio_theoretical.index, 
-                 y = sharpe_ratio_theoretical['max{SR}'], 
-                 linestyle = 'dashed', ax = ax)
+    # Set x-axis to the log-scale
+    ax.set_xscale('log')
+
+    # Add legend
+    plt.legend(loc = 'lower right')
+
+    # Save the figure
+    plt.savefig(path + 'fig.8.1.png')
     
     plt.show()
     
+    # Get the errors
     mean_error = get_mean_std_error(
-                                #num_sims_per_run = 1e3, 
-                                num_sims_per_run = 100,
+                                num_sims_per_run = 1e3, 
                                 num_runs = 1e2, 
                                 trials_per_sim_list = trials_per_sim_list, 
                                 std_SR = 1.0)
