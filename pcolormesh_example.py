@@ -26,7 +26,6 @@ trials_per_run = 10
 # Initialize array to hold exprimental values
 exprimental_values = np.zeros(shape = (num_runs * len(num_vals), 2))
 
-
 for i, n in enumerate(num_vals):
     
     for j in range(num_runs):
@@ -36,7 +35,7 @@ for i, n in enumerate(num_vals):
         
         # Recrod results
         exprimental_values[num_runs * i + j, 0] = n
-        exprimental_values[num_runs * i + j, 1] = np.std(dist, ddof = 1)
+        exprimental_values[num_runs * i + j, 1] = dist.std(ddof = 1)
         
 # Convert to a pandas data frame
 exprimental_values = pd.DataFrame(exprimental_values, columns = ['num', 'std'])
