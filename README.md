@@ -83,4 +83,4 @@ by Marcos López de Prado
 * **Experimental Results**
 * **The Deflated Sharpe Ratio**
 * **Familywise Error Rate**
-* **Conclusions***
+* **Conclusions**
