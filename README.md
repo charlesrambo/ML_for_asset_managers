@@ -75,3 +75,12 @@ by Marcos López de Prado
 * **Conclusions***
 
 ### Chapter 8: Testing Set Overfitting
+* **Motivation** 
+* **Precision and Recall**
+* **Precision and Recall under Multiple Testing**
+* **Sharpe Ratio**
+* **The "False Strategy" Theorem**
+* **Experimental Results**
+* **The Deflated Sharpe Ratio**
+* **Familywise Error Rate**
+* **Conclusions***
