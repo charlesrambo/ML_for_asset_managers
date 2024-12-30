@@ -11,7 +11,7 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import sys
 
-path = r'G:/USERS/CharlesR/Python/ML_for_asset_managers/'
+
 
 # Make the directory Python because that's where cal_signals is located
 sys.path.insert(0, path)
@@ -84,8 +84,7 @@ def get_mean_std_error(num_sims_per_run, num_runs, trials_per_sim_list,
         
         run_error = sharpe_ratios.join(sharpe_ratio_sims).reset_index()
         run_error['error'] = run_error['max{SR}']/run_error['E[max{SR}]'] - 1
-        
-        
+          
         error = pd.concat([error, run_error], axis = 0, ignore_index = True)
         
     out = {'mean_error':error.groupby('num_trials')['error'].mean(), 
@@ -144,9 +143,9 @@ def get_type_2_error_prob(alpha_k, k, theta):
 if __name__ == '__main__':
     
     #--------------------------------------------------------------------------
-    # Define the number of trials
-    trials_per_sim_list = np.logspace(1, 4, 1000).astype(int) 
-    
+    # Define the number of trials; use numpy unique to get rid of duplicates
+    trials_per_sim_list = np.unique(np.logspace(1, 4, 1000).astype(int))
+        
     # Calculate the theoretical values for each number of trials
     sharpe_ratio_theoretical = pd.Series({num_trials:get_expected_max_SR(num_trials, mean_SR = 0, std_SR = 1) 
                                           for num_trials in trials_per_sim_list})
@@ -205,7 +204,7 @@ if __name__ == '__main__':
     c = ax.pcolormesh(X, Y, Z, cmap = 'Blues')
 
     # Add a color bar
-    fig.colorbar(c, label = 'Normalized Counts', aspect = 12, pad = 0.02)
+    fig.colorbar(c, label = 'Normalized Counts', pad = 0.02)
 
     # Place theoretical values on graph
     sharpe_ratio_theoretical.plot(ax = ax, color = 'red')
@@ -229,11 +228,30 @@ if __name__ == '__main__':
     plt.show()
     
     # Get the errors
-    mean_error = get_mean_std_error(
+    mean_std_errors = get_mean_std_error(
                                 num_sims_per_run = 1e3, 
                                 num_runs = 1e2, 
                                 trials_per_sim_list = trials_per_sim_list, 
                                 std_SR = 1.0)
+    
+    
+    # Get figure and axes
+    fig, ax = plt.subplots()
+    
+    # Plot errors
+    mean_std_errors.plot(ax = ax, marker = '.')
+
+    # Add axis labels
+    ax.set_xlabel('Number of Trials')
+    ax.set_ylabel('$E[error]$, $std(error)$')
+    
+    # Set x-axis to the log-scale
+    ax.set_xscale('log')
+    
+    # Save the figure
+    plt.savefig(path + 'fig.8.2.png')
+    
+    plt.show()
     
     #--------------------------------------------------------------------------
     t, skew, kurt, k, freq = 1250, -3, 10, 10, 250
@@ -247,10 +265,29 @@ if __name__ == '__main__':
     beta = get_type_2_error_prob(alpha_k, k, theta)
     beta_k = beta**k
     
+    #--------------------------------------------------------------------------
+    # Define k-values
+    k_vals = np.arange(1, 26)
+    theta = 1.9982
     
+    # Get figure and axes
+    fig, ax = plt.subplots()
     
-    
-    
-    
+    # Loop over values of alpha_k
+    for alpha_k in [0.01, 0.025, 0.005]:
         
+        ax.plot(k_vals, get_type_2_error_prob(alpha_k, k_vals, theta)**k_vals, 
+                label = r'$\alpha_K$ = ' + str(alpha_k))
         
+    # Add axis labels
+    ax.set_xlabel('Number of Trials ($K$)')
+    ax.set_ylabel(r'Familywise False Negative Probability ($\beta_K$)')
+    
+    # Add a legend
+    plt.legend()
+    
+    # Save the figure
+    plt.savefig(path + 'fig.8.3.png')
+    
+    plt.show()
+    
