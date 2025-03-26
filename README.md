@@ -62,7 +62,7 @@ by Marcos López de Prado
 * **Probability-Weighted Accuracy**
 * **Substitution Effects**
 * **Experimental Results**
-* **Conclusions***
+* **Conclusions**
 
 ### Chapter 7: Portfolio Construction
 * **Motivation** 
@@ -72,7 +72,7 @@ by Marcos López de Prado
 * **Signal as a Source of Covariance Instability**
 * **Nested Clustered Optimization Algorithm**
 * **Experimental Results**
-* **Conclusions***
+* **Conclusions**
 
 ### Chapter 8: Testing Set Overfitting
 * **Motivation** 
