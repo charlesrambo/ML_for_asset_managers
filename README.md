@@ -15,7 +15,7 @@ by Marcos López de Prado
 * **Conclusion**
 
 ### Chapter 2: Denoising and Detoning
-* **Motevation** 
+* **Motivation** 
 * **The Marcenko-Pastur Theorem** 
 * **Random Matrix with Signal** 
 * **Fitting the Marcenko-Pastur Distribution** 
@@ -25,7 +25,7 @@ by Marcos López de Prado
 * **Conclusion**
   
 ### Chapter 3: Distance Metrics
-* **Motevation** 
+* **Motivation**  
 * **Correlation-Based Metrics**
 * **Marginal and Joint Entropy**
 * **Conditional Entropy**
@@ -39,7 +39,7 @@ by Marcos López de Prado
 * **Conclusion**
 
 ### Chapter 4: Optimal Clustering
-* **Motevation**
+* **Motivation** 
 * **Proximity Matrix**
 * **Types of Clustering**
 * **Number of Clusters**
@@ -47,7 +47,7 @@ by Marcos López de Prado
 * **Conclusions**
   
 ### Chapter 5: Financial Labels
-* **Motevation**
+* **Motivation** 
 * **Fixed-Horizon Method**
 * **Triple-Barrier Method**
 * **Trend-Scanning Method**
@@ -56,7 +56,7 @@ by Marcos López de Prado
 * **Conclusions**
   
 ### Chapter 6: Feature Importance Analysis
-* **Motivation** 
+* **Motivation**  
 * **p-Values** 
 * **Feature Importance** 
 * **Probability-Weighted Accuracy**
